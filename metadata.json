@@ -1,0 +1,5 @@
+{
+  "name": "BugTracker Pro",
+  "description": "A modern, minimal bug reporting system featuring role-based access for developers and users. Includes dashboard analytics, report management, and user administration with offline-capable architecture.",
+  "requestFramePermissions": []
+}
