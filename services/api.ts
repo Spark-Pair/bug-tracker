@@ -1,3 +1,4 @@
+import { getFCMToken } from '@/firebase';
 import { User, Report, ReportStatus, Comment } from '../types';
 
 export const API_URL = import.meta.env?.VITE_BACKEND_URL;
@@ -17,6 +18,16 @@ export const api = {
       body: JSON.stringify({ username, password })
     });
     if (!res.ok) throw new Error('Invalid credentials');
+
+    const token = await getFCMToken();
+    if (token) {
+      await fetch(`${API_URL}/users/fcm-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+    }
+
     return await res.json();
   },
 
