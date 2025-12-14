@@ -1,7 +1,8 @@
 import { getFCMToken } from '@/firebase';
 import { User, Report, ReportStatus, Comment } from '../types';
 
-export const API_URL = import.meta.env?.VITE_BACKEND_URL;
+// export const API_URL = import.meta.env?.VITE_BACKEND_URL;
+export const API_URL = 'https://bug-tracker-backend-cyan.vercel.app';
 
 const sendNotification = (title: string, body: string) => {
   if (Notification.permission === 'granted') {
