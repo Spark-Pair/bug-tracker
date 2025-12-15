@@ -46,7 +46,6 @@ export const api = {
     return user;
   },
 
-
   getUsers: async (): Promise<User[]> => {
     const res = await fetch(`${API_URL}/users`);
     if (!res.ok) throw new Error('Failed to fetch users');
