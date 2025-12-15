@@ -91,9 +91,9 @@ export const api = {
     
     if (!res.ok) throw new Error('Failed to create report');
     const newReport = await res.json();
-    
-    sendNotification('New Bug Reported', `#${newReport.id}: ${newReport.app}`);
-    
+
+    // ✅ No frontend notification, backend handles developer push
+
     return newReport;
   },
 
