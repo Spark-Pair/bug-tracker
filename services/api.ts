@@ -2,7 +2,7 @@ import { getFCMToken } from '@/firebase';
 import { User, Report, ReportStatus, Comment } from '../types';
 
 // export const API_URL = import.meta.env?.VITE_BACKEND_URL;
-export const API_URL = 'https://bug-tracker-backend-cyan.vercel.app';
+export const API_URL = 'http://192.168.100.12:5000';
 
 const sendNotification = (title: string, body: string) => {
   if (Notification.permission === 'granted') {
@@ -12,25 +12,40 @@ const sendNotification = (title: string, body: string) => {
 
 export const api = {
   // User Operations
-  login: async (username: string, password: string): Promise<User | null> => {
+  login: async (username: string, password: string): Promise<User> => {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
-    if (!res.ok) throw new Error('Invalid credentials');
 
-    const token = await getFCMToken();
-    if (token) {
+    if (!res.ok) {
+      const err = await res.json();
+      console.error('Login failed:', err);
+      throw new Error(err.message || 'Invalid credentials');
+    }
+
+    const user = await res.json();
+
+    console.log('Login response:', user); // 👈 response logged
+
+    // ---- FCM TOKEN ----
+    const fcmToken = await getFCMToken();
+
+    if (fcmToken && user.token) {
       await fetch(`${API_URL}/users/fcm-token`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify({ token: fcmToken })
       });
     }
 
-    return await res.json();
+    return user;
   },
+
 
   getUsers: async (): Promise<User[]> => {
     const res = await fetch(`${API_URL}/users`);
